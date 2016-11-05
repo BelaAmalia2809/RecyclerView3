@@ -176,11 +176,13 @@ public class MainActivity extends AppCompatActivity implements HotelAdapter.IHot
         itemPos = pos;
         final Hotel hotel = mList.get(pos);
         mList.remove(itemPos);
+        if (isFiltered) mListAll.remove(mListMapFilter.get(itemPos).intValue());
         mAdapter.notifyDataSetChanged();
         Snackbar.make(findViewById(R.id.fab), hotel.judul + " Terhapus", Snackbar.LENGTH_LONG).setAction("UNDO", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mList.add(itemPos, hotel);
+                if (isFiltered) mListAll.add(mListMapFilter.get(itemPos), hotel);
                 mAdapter.notifyDataSetChanged();
             }
         }).show();
@@ -202,11 +204,14 @@ public class MainActivity extends AppCompatActivity implements HotelAdapter.IHot
         if (requestCode == REQUEST_CODE_ADD && resultCode == RESULT_OK) {
             Hotel hotel = (Hotel) data.getSerializableExtra(HOTEL);
             mList.add(hotel);
-            mAdapter.notifyDataSetChanged();
+            if (isFiltered) mListAll.add(hotel);
+            doFilter(mQuery);
         } else if (requestCode == REQUEST_CODE_EDIT && resultCode == RESULT_OK) {
             Hotel hotel = (Hotel) data.getSerializableExtra(HOTEL);
             mList.remove(itemPos);
+            if (isFiltered) mListAll.remove(mListMapFilter.get(itemPos).intValue());
             mList.add(itemPos, hotel);
+            if (isFiltered) mListAll.add(mListMapFilter.get(itemPos), hotel);
             mAdapter.notifyDataSetChanged();
         }
     }
